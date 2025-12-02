@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useDropzone } from 'react-dropzone';
 import { Upload, FileText, X } from 'lucide-react';
 import axios from 'axios';
+import { useAuth } from '@/hooks/useAuth';
 
 const formSchema = z.object({
   ownerEmail: z.string().email({ message: "Invalid email address" }),
@@ -25,6 +26,7 @@ const formSchema = z.object({
 
 export default function CreateDocument() {
   const { address } = useAccount();
+  const { token, login } = useAuth();
   const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -47,9 +49,10 @@ export default function CreateDocument() {
     }
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     maxFiles: 1,
+    noClick: true, // Disable default click to handle it manually if needed, or keep it enabled. Let's try explicit button.
     accept: {
       'application/pdf': ['.pdf'],
       'application/msword': ['.doc'],
@@ -65,6 +68,20 @@ export default function CreateDocument() {
 
     setIsUploading(true);
     try {
+      // Ensure we have an auth token
+      let authToken = token;
+      if (!authToken) {
+        try {
+          const authData = await login();
+          authToken = authData.token;
+        } catch (authError) {
+          console.error('Authentication failed:', authError);
+          alert('Authentication failed. Please sign the message to continue.');
+          setIsUploading(false);
+          return;
+        }
+      }
+
       const formData = new FormData();
       formData.append('file', file);
       formData.append('ownerEmail', values.ownerEmail);
@@ -77,10 +94,13 @@ export default function CreateDocument() {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/documents`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${authToken}`,
         },
       });
 
-      router.push(`/documents/${response.data.document.id}`);
+      // Show success message and redirect to dashboard instead of document details
+      alert("Document created successfully! You will be redirected to the dashboard.");
+      router.push('/dashboard');
     } catch (error) {
       console.error('Error creating document:', error);
       alert('Failed to create document. Please try again.');
@@ -183,7 +203,7 @@ export default function CreateDocument() {
 
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                 isDragActive ? 'border-primary bg-primary/10' : 'border-muted-foreground/25 hover:border-primary'
               }`}
             >
@@ -209,6 +229,9 @@ export default function CreateDocument() {
                   <Upload className="h-8 w-8" />
                   <p>Drag & drop a file here, or click to select</p>
                   <p className="text-sm">PDF, DOCX, TXT, Images (max 10MB)</p>
+                  <Button type="button" variant="secondary" onClick={open}>
+                    Select File
+                  </Button>
                 </div>
               )}
             </div>

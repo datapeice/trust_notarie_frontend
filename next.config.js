@@ -1,12 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',  // Enables static export for GitHub Pages
+  // output: 'export',  // Disabled to allow dynamic routes like /documents/[id]
   images: {
-    unoptimized: true, // Required for static export
+    unoptimized: true,
   },
-  // If you are deploying to a subdirectory (e.g. username.github.io/repo-name),
-  // you need to set basePath. If using a custom domain at root, leave commented.
-  // basePath: '/trust_notarie_frontend',
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@react-native-async-storage/async-storage': false, // Fix for MetaMask SDK
+    };
+    config.externals.push('pino-pretty', 'lokijs', 'encoding');
+    return config;
+  },
 };
 
 module.exports = nextConfig;
