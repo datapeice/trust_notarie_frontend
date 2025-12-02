@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,24 +9,24 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Download, ExternalLink, FileText } from 'lucide-react';
 
-export default function DocumentDetails() {
-  const params = useParams();
-  const id = params.id as string;
+function DocumentDetailsContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
   const { token, isAuthenticated, isLoading: authLoading } = useAuth();
   const [document, setDocument] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (token && id) {
-      fetchDocument();
+      fetchDocument(id);
     } else if (!authLoading && !isAuthenticated) {
         setLoading(false);
     }
   }, [token, id, authLoading, isAuthenticated]);
 
-  const fetchDocument = async () => {
+  const fetchDocument = async (docId: string) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/documents/${id}`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/documents/${docId}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDocument(response.data);
@@ -102,28 +102,15 @@ export default function DocumentDetails() {
             </div>
           </CardContent>
         </Card>
-
-        {document.blockchainTxHash && (
-          <Card className="md:col-span-2">
-            <CardHeader>
-              <CardTitle>Blockchain Verification</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between p-4 bg-secondary/20 rounded-lg">
-                <div>
-                  <p className="font-semibold">Transaction Hash</p>
-                  <p className="text-sm font-mono text-muted-foreground break-all">{document.blockchainTxHash}</p>
-                </div>
-                <Button variant="ghost" size="sm" asChild>
-                  <a href={`https://sepolia.arbiscan.io/tx/${document.blockchainTxHash}`} target="_blank" rel="noopener noreferrer">
-                    View on Explorer <ExternalLink className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </div>
+  );
+}
+
+export default function DocumentDetails() {
+  return (
+    <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>}>
+      <DocumentDetailsContent />
+    </Suspense>
   );
 }

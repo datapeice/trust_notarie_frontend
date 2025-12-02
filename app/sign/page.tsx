@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect, useState, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { useAccount, useSignMessage } from 'wagmi';
 import { Button } from '@/components/ui/button';
@@ -19,9 +19,9 @@ const signSchema = z.object({
   signerEmail: z.string().email("Invalid email"),
 });
 
-export default function SignDocument() {
-  const params = useParams();
-  const token = params.token as string;
+function SignDocumentContent() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get('token');
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   
@@ -42,13 +42,16 @@ export default function SignDocument() {
 
   useEffect(() => {
     if (token) {
-      fetchDocument();
+      fetchDocument(token);
+    } else {
+      setLoading(false);
+      setError('No token provided');
     }
   }, [token]);
 
-  const fetchDocument = async () => {
+  const fetchDocument = async (docToken: string) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/document/${token}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/document/${docToken}`);
       setDocument(response.data);
       form.reset({
         signerEmail: response.data.signerEmail,
@@ -103,45 +106,45 @@ export default function SignDocument() {
   );
 
   return (
-    <div className="container mx-auto p-8 max-w-2xl">
+    <div className="container mx-auto p-8 max-w-md">
       <Card>
         <CardHeader>
           <CardTitle>Sign Document</CardTitle>
-          <CardDescription>You have been invited to sign <strong>{document.fileName}</strong></CardDescription>
+          <CardDescription>Please review and sign the document below.</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="mb-6 p-4 bg-secondary/20 rounded-lg">
-            <p><strong>Owner:</strong> {document.ownerName}</p>
-            <p><strong>File Size:</strong> {(document.fileSize / 1024 / 1024).toFixed(2)} MB</p>
+          <div className="mb-6 p-4 bg-muted rounded-lg">
+            <h3 className="font-semibold mb-2">Document Info</h3>
+            <p className="text-sm">File: {document?.fileName}</p>
+            <p className="text-sm">Owner: {document?.ownerFirstName} {document?.ownerLastName}</p>
           </div>
 
           {!isConnected ? (
-            <div className="text-center py-8">
-              <p className="mb-4">Please connect your wallet to sign this document.</p>
-              {/* Connect Button is in the header usually, but we can prompt user */}
+            <div className="text-center">
+              <p className="mb-4 text-sm text-muted-foreground">Please connect your wallet to sign.</p>
+              {/* Wallet connect button is usually in the header, but we can add a hint */}
             </div>
           ) : (
             <form onSubmit={form.handleSubmit(onSign)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="firstName">First Name</Label>
-                  <Input {...form.register("signerFirstName")} placeholder="John" />
-                  {form.formState.errors.signerFirstName && <p className="text-red-500 text-sm">{form.formState.errors.signerFirstName.message}</p>}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="lastName">Last Name</Label>
-                  <Input {...form.register("signerLastName")} placeholder="Doe" />
-                  {form.formState.errors.signerLastName && <p className="text-red-500 text-sm">{form.formState.errors.signerLastName.message}</p>}
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="signerFirstName">First Name</Label>
+                <Input id="signerFirstName" {...form.register("signerFirstName")} />
+                {form.formState.errors.signerFirstName && <p className="text-red-500 text-xs">{form.formState.errors.signerFirstName.message}</p>}
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input {...form.register("signerEmail")} readOnly className="bg-muted" />
+                <Label htmlFor="signerLastName">Last Name</Label>
+                <Input id="signerLastName" {...form.register("signerLastName")} />
+                {form.formState.errors.signerLastName && <p className="text-red-500 text-xs">{form.formState.errors.signerLastName.message}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signerEmail">Email</Label>
+                <Input id="signerEmail" {...form.register("signerEmail")} disabled />
               </div>
 
               <Button type="submit" className="w-full" disabled={signing}>
-                {signing ? <Loader2 className="animate-spin mr-2" /> : null}
+                {signing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 Sign Document
               </Button>
             </form>
@@ -149,5 +152,13 @@ export default function SignDocument() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function SignDocument() {
+  return (
+    <Suspense fallback={<div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>}>
+      <SignDocumentContent />
+    </Suspense>
   );
 }

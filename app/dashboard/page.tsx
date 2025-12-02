@@ -131,7 +131,7 @@ export default function Dashboard() {
                                 ) : '-'}
                             </TableCell>
                             <TableCell>
-                                <Link href={`/documents/${doc.id}`}>
+                                <Link href={`/documents?id=${doc.id}`}>
                                     <Button variant="ghost" size="sm">Details</Button>
                                 </Link>
                             </TableCell>
