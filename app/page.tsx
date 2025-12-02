@@ -1,15 +1,12 @@
 'use client';
 
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ShieldCheck, FileSignature, Wallet } from 'lucide-react';
 import Link from 'next/link';
 
 export default function Home() {
-  const { isConnected } = useAccount();
-
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
@@ -22,26 +19,71 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-to-br before:from-transparent before:to-blue-700 before:opacity-10 before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-to-t after:from-sky-900 after:via-[#38ef7d] after:opacity-40 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#38ef7d] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <div className="text-center">
+      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-to-br before:from-transparent before:to-blue-700 before:opacity-10 before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-to-t after:from-sky-900 after:via-[#38ef7d] after:opacity-40 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#38ef7d] after:dark:opacity-40 before:lg:h-[360px]">
+        <div className="text-center relative z-10">
           <h1 className="text-6xl font-bold mb-4 text-primary">TrustNotarie</h1>
           <p className="text-xl text-muted-foreground mb-8">
             Secure, Blockchain-Powered Document Signing
           </p>
           
-          {!isConnected && (
+          <div className="mt-10">
             <div className="flex justify-center gap-4">
-              <ConnectButton />
+              <ConnectButton.Custom>
+                {({
+                  account,
+                  chain,
+                  openAccountModal,
+                  openChainModal,
+                  openConnectModal,
+                  authenticationStatus,
+                  mounted,
+                }: any) => {
+                  const ready = mounted && authenticationStatus !== 'loading';
+                  const connected =
+                    ready &&
+                    account &&
+                    chain &&
+                    (!authenticationStatus ||
+                      authenticationStatus === 'authenticated');
+
+                  if (!ready) {
+                    return (
+                      <Button disabled className="bg-primary/50 text-primary-foreground text-lg px-8 py-6">
+                        Loading...
+                      </Button>
+                    );
+                  }
+
+                  if (!connected) {
+                    return (
+                      <Button
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 cursor-pointer relative z-50"
+                        onClick={openConnectModal}
+                      >
+                        Connect Wallet to Start
+                      </Button>
+                    );
+                  }
+
+                  if (chain.unsupported) {
+                    return (
+                      <Button onClick={openChainModal} variant="destructive" className="text-lg px-8 py-6 cursor-pointer relative z-50">
+                        Wrong Network
+                      </Button>
+                    );
+                  }
+
+                  return (
+                    <Link href="/create">
+                      <Button className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 cursor-pointer relative z-50">
+                        Create New Document
+                      </Button>
+                    </Link>
+                  );
+                }}
+              </ConnectButton.Custom>
             </div>
-          )}
-          
-          {isConnected && (
-             <Link href="/create">
-               <Button className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6">
-                 Create New Document
-               </Button>
-             </Link>
-          )}
+          </div>
         </div>
       </div>
 
@@ -85,3 +127,4 @@ export default function Home() {
     </main>
   );
 }
+

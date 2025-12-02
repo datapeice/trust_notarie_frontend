@@ -15,10 +15,12 @@ import { Upload, FileText, X } from 'lucide-react';
 import axios from 'axios';
 
 const formSchema = z.object({
+  ownerEmail: z.string().email({ message: "Invalid email address" }),
+  ownerFirstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
+  ownerLastName: z.string().min(2, { message: "Last name must be at least 2 characters" }),
   signerEmail: z.string().email({ message: "Invalid email address" }),
   signerFirstName: z.string().min(2, { message: "First name must be at least 2 characters" }),
   signerLastName: z.string().min(2, { message: "Last name must be at least 2 characters" }),
-  signerAddress: z.string().regex(/^0x[a-fA-F0-9]{40}$/, { message: "Invalid Ethereum address" }).optional().or(z.literal('')),
 });
 
 export default function CreateDocument() {
@@ -30,10 +32,12 @@ export default function CreateDocument() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      ownerEmail: "",
+      ownerFirstName: "",
+      ownerLastName: "",
       signerEmail: "",
       signerFirstName: "",
       signerLastName: "",
-      signerAddress: "",
     },
   });
 
@@ -63,13 +67,12 @@ export default function CreateDocument() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('ownerAddress', address);
+      formData.append('ownerEmail', values.ownerEmail);
+      formData.append('ownerFirstName', values.ownerFirstName);
+      formData.append('ownerLastName', values.ownerLastName);
       formData.append('signerEmail', values.signerEmail);
       formData.append('signerFirstName', values.signerFirstName);
       formData.append('signerLastName', values.signerLastName);
-      if (values.signerAddress) {
-        formData.append('signerAddress', values.signerAddress);
-      }
 
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/documents`, formData, {
         headers: {
@@ -77,7 +80,7 @@ export default function CreateDocument() {
         },
       });
 
-      router.push(`/documents/${response.data.id}`);
+      router.push(`/documents/${response.data.document.id}`);
     } catch (error) {
       console.error('Error creating document:', error);
       alert('Failed to create document. Please try again.');
@@ -98,111 +101,120 @@ export default function CreateDocument() {
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             
-            {/* File Upload Area */}
-            <div className="space-y-2">
-              <Label>Document File</Label>
-              <div
-                {...getRootProps()}
-                className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-                  isDragActive ? 'border-primary bg-primary/10' : 'border-muted hover:border-primary/50'
-                }`}
-              >
-                <input {...getInputProps()} />
-                {file ? (
-                  <div className="flex items-center justify-center gap-4">
-                    <FileText className="h-8 w-8 text-primary" />
-                    <div className="text-left">
-                      <p className="font-medium">{file.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {(file.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
-                    </div>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setFile(null);
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-2">
-                    <Upload className="h-8 w-8 text-muted-foreground" />
-                    <p className="text-muted-foreground">
-                      Drag & drop a file here, or click to select
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      PDF, DOCX, TXT, PNG, JPG (Max 10MB)
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Signer Details */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="signerFirstName">Signer First Name</Label>
-                <Input
-                  id="signerFirstName"
-                  placeholder="John"
-                  {...form.register("signerFirstName")}
-                />
-                {form.formState.errors.signerFirstName && (
-                  <p className="text-sm text-destructive">{form.formState.errors.signerFirstName.message}</p>
-                )}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Your Details</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="ownerFirstName">First Name</Label>
+                  <Input
+                    id="ownerFirstName"
+                    placeholder="John"
+                    {...form.register("ownerFirstName")}
+                  />
+                  {form.formState.errors.ownerFirstName && (
+                    <p className="text-sm text-destructive">{form.formState.errors.ownerFirstName.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="ownerLastName">Last Name</Label>
+                  <Input
+                    id="ownerLastName"
+                    placeholder="Doe"
+                    {...form.register("ownerLastName")}
+                  />
+                  {form.formState.errors.ownerLastName && (
+                    <p className="text-sm text-destructive">{form.formState.errors.ownerLastName.message}</p>
+                  )}
+                </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="signerLastName">Signer Last Name</Label>
+                <Label htmlFor="ownerEmail">Email</Label>
                 <Input
-                  id="signerLastName"
-                  placeholder="Doe"
-                  {...form.register("signerLastName")}
+                  id="ownerEmail"
+                  type="email"
+                  placeholder="john@example.com"
+                  {...form.register("ownerEmail")}
                 />
-                {form.formState.errors.signerLastName && (
-                  <p className="text-sm text-destructive">{form.formState.errors.signerLastName.message}</p>
+                {form.formState.errors.ownerEmail && (
+                  <p className="text-sm text-destructive">{form.formState.errors.ownerEmail.message}</p>
                 )}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="signerEmail">Signer Email</Label>
-              <Input
-                id="signerEmail"
-                type="email"
-                placeholder="john.doe@example.com"
-                {...form.register("signerEmail")}
-              />
-              {form.formState.errors.signerEmail && (
-                <p className="text-sm text-destructive">{form.formState.errors.signerEmail.message}</p>
-              )}
+            <div className="space-y-4">
+              <h3 className="text-lg font-medium">Signer Details</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="signerFirstName">First Name</Label>
+                  <Input
+                    id="signerFirstName"
+                    placeholder="Jane"
+                    {...form.register("signerFirstName")}
+                  />
+                  {form.formState.errors.signerFirstName && (
+                    <p className="text-sm text-destructive">{form.formState.errors.signerFirstName.message}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signerLastName">Last Name</Label>
+                  <Input
+                    id="signerLastName"
+                    placeholder="Smith"
+                    {...form.register("signerLastName")}
+                  />
+                  {form.formState.errors.signerLastName && (
+                    <p className="text-sm text-destructive">{form.formState.errors.signerLastName.message}</p>
+                  )}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="signerEmail">Email</Label>
+                <Input
+                  id="signerEmail"
+                  type="email"
+                  placeholder="jane@example.com"
+                  {...form.register("signerEmail")}
+                />
+                {form.formState.errors.signerEmail && (
+                  <p className="text-sm text-destructive">{form.formState.errors.signerEmail.message}</p>
+                )}
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="signerAddress">Signer Wallet Address (Optional)</Label>
-              <Input
-                id="signerAddress"
-                placeholder="0x..."
-                {...form.register("signerAddress")}
-              />
-              {form.formState.errors.signerAddress && (
-                <p className="text-sm text-destructive">{form.formState.errors.signerAddress.message}</p>
-              )}
-              <p className="text-xs text-muted-foreground">
-                If provided, only this wallet can sign the document.
-              </p>
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={!file || isUploading}
+            <div
+              {...getRootProps()}
+              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                isDragActive ? 'border-primary bg-primary/10' : 'border-muted-foreground/25 hover:border-primary'
+              }`}
             >
-              {isUploading ? "Creating..." : "Create & Send Invitation"}
+              <input {...getInputProps()} />
+              {file ? (
+                <div className="flex items-center justify-center gap-2 text-primary">
+                  <FileText className="h-8 w-8" />
+                  <span className="text-lg font-medium">{file.name}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setFile(null);
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                  <Upload className="h-8 w-8" />
+                  <p>Drag & drop a file here, or click to select</p>
+                  <p className="text-sm">PDF, DOCX, TXT, Images (max 10MB)</p>
+                </div>
+              )}
+            </div>
+
+            <Button type="submit" className="w-full" disabled={isUploading || !file}>
+              {isUploading ? "Creating Document..." : "Create Document"}
             </Button>
           </form>
         </CardContent>
