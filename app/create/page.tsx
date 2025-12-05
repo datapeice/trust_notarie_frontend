@@ -70,6 +70,12 @@ export default function CreateDocument() {
     try {
       // Ensure we have an auth token
       let authToken = token;
+      
+      // If no token, try to get it from localStorage directly as a fallback
+      if (!authToken && typeof window !== 'undefined') {
+        authToken = localStorage.getItem('authToken');
+      }
+
       if (!authToken) {
         try {
           const authData = await login();
