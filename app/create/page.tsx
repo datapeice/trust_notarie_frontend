@@ -107,9 +107,47 @@ export default function CreateDocument() {
       // Show success message and redirect to dashboard instead of document details
       alert("Document created successfully! You will be redirected to the dashboard.");
       router.push('/dashboard');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating document:', error);
-      alert('Failed to create document. Please try again.');
+      
+      // Handle 401 Unauthorized specifically
+      if (error.response && error.response.status === 401) {
+        // Clear invalid token
+        localStorage.removeItem('authToken');
+        
+        // Try to re-login automatically
+        try {
+          const confirmLogin = window.confirm("Your session has expired. Please sign in again to continue.");
+          if (confirmLogin) {
+            const authData = await login();
+            // Retry the request with new token
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('ownerEmail', values.ownerEmail);
+            formData.append('ownerFirstName', values.ownerFirstName);
+            formData.append('ownerLastName', values.ownerLastName);
+            formData.append('signerEmail', values.signerEmail);
+            formData.append('signerFirstName', values.signerFirstName);
+            formData.append('signerLastName', values.signerLastName);
+
+            await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/documents`, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${authData.token}`,
+              },
+            });
+            
+            alert("Document created successfully! You will be redirected to the dashboard.");
+            router.push('/dashboard');
+            return;
+          }
+        } catch (loginError) {
+          console.error("Re-login failed:", loginError);
+          alert("Authentication failed. Please try again.");
+        }
+      } else {
+        alert('Failed to create document. Please try again.');
+      }
     } finally {
       setIsUploading(false);
     }
