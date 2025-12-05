@@ -3,6 +3,7 @@ import { Ubuntu } from "next/font/google";
 import "./globals.css";
 import '@rainbow-me/rainbowkit/styles.css';
 import { Providers } from "./providers";
+import Header from "@/components/Header";
 
 const ubuntu = Ubuntu({ 
   weight: ['300', '400', '500', '700'],
@@ -22,9 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
-      <body className={`${ubuntu.className} bg-background text-foreground min-h-screen`}>
+      <body className={`${ubuntu.className} bg-background text-foreground min-h-screen flex flex-col`}>
         <Providers>
-          {children}
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
         </Providers>
       </body>
     </html>

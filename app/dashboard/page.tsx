@@ -23,7 +23,7 @@ interface Document {
 }
 
 export default function Dashboard() {
-  const { token, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { token, isAuthenticated, isConnected, login, isLoading: authLoading, logout } = useAuth();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -42,8 +42,11 @@ export default function Dashboard() {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDocuments(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to fetch documents', error);
+      if (error.response && error.response.status === 401) {
+        logout(); // Token expired or invalid
+      }
     } finally {
       setLoading(false);
     }
@@ -55,12 +58,22 @@ export default function Dashboard() {
 
   if (authLoading) return <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>;
 
-  if (!isAuthenticated) {
+  if (!isConnected) {
       return (
           <div className="container mx-auto p-8 text-center">
               <h1 className="text-2xl font-bold mb-4">Please connect your wallet to view dashboard</h1>
           </div>
       )
+  }
+
+  if (!isAuthenticated) {
+    return (
+        <div className="container mx-auto p-8 text-center">
+            <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
+            <p className="mb-4 text-muted-foreground">Please sign the message to verify your ownership of the wallet.</p>
+            <Button onClick={login}>Sign In with Wallet</Button>
+        </div>
+    )
   }
 
   return (
@@ -90,7 +103,7 @@ export default function Dashboard() {
           {loading ? (
             <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>
           ) : (
-            <div className="rounded-md border">
+            <div className="rounded-md border overflow-x-auto">
                 <Table>
                 <TableHeader>
                     <TableRow>

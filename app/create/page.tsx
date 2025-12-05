@@ -110,7 +110,7 @@ export default function CreateDocument() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-8 lg:p-24">
+    <main className="flex min-h-screen flex-col items-center p-4 md:p-8 lg:p-24">
       <Card className="w-full max-w-2xl bg-card border-border">
         <CardHeader>
           <CardTitle className="text-2xl text-primary">Create New Document</CardTitle>
@@ -123,7 +123,7 @@ export default function CreateDocument() {
             
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Your Details</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="ownerFirstName">First Name</Label>
                   <Input
@@ -163,7 +163,7 @@ export default function CreateDocument() {
 
             <div className="space-y-4">
               <h3 className="text-lg font-medium">Signer Details</h3>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="signerFirstName">First Name</Label>
                   <Input
