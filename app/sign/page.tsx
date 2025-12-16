@@ -98,9 +98,10 @@ function SignDocumentContent() {
       });
 
       setSuccess(true);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError('Failed to sign document. Please try again.');
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to sign document. Please try again.';
+      setError(errorMessage);
     } finally {
       setSigning(false);
     }
