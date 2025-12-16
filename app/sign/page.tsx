@@ -3,13 +3,13 @@
 import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
-import { useAccount, useSignMessage } from 'wagmi';
+import { useAccount, useSignMessage, useDisconnect } from 'wagmi';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, CheckCircle, AlertCircle, FileText, Download, FileSignature } from 'lucide-react';
+import { Loader2, CheckCircle, AlertCircle, FileText, Download, FileSignature, LogOut } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -24,6 +24,7 @@ function SignDocumentContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   const { openConnectModal } = useConnectModal();
   const { signMessageAsync } = useSignMessage();
   
@@ -69,6 +70,13 @@ function SignDocumentContent() {
 
   const onSign = async (values: z.infer<typeof signSchema>) => {
     if (!address) return;
+    
+    // Check if document has a specific signer address enforced
+    if (document?.signerAddress && document.signerAddress.toLowerCase() !== address.toLowerCase()) {
+        setError(`This document can only be signed by ${document.signerAddress}. You are connected with ${address}.`);
+        return;
+    }
+
     setSigning(true);
     setError(null);
 
@@ -98,10 +106,10 @@ function SignDocumentContent() {
     }
   };
 
-  if (loading) return <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>;
-  if (error) return <div className="flex justify-center p-8 text-red-500"><AlertCircle className="mr-2" /> {error}</div>;
+  if (loading) return <div className="flex justify-center p-8 pt-24"><Loader2 className="animate-spin" /></div>;
+  if (error) return <div className="flex justify-center p-8 pt-24 text-red-500"><AlertCircle className="mr-2" /> {error}</div>;
   if (success) return (
-    <div className="container mx-auto p-8 max-w-md text-center">
+    <div className="container mx-auto p-8 pt-24 max-w-md text-center">
       <Card>
         <CardContent className="pt-6">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
@@ -121,7 +129,7 @@ function SignDocumentContent() {
   );
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-lg">
+    <div className="container mx-auto p-4 md:p-8 pt-24 max-w-lg">
       <Card>
         <CardHeader>
           <CardTitle>Sign Document</CardTitle>
@@ -162,38 +170,50 @@ function SignDocumentContent() {
               </div>
             </div>
           ) : (
-            <form onSubmit={form.handleSubmit(onSign)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signerFirstName">First Name</Label>
-                  <Input id="signerFirstName" {...form.register("signerFirstName")} disabled />
-                  {form.formState.errors.signerFirstName && <p className="text-red-500 text-xs">{form.formState.errors.signerFirstName.message}</p>}
+            <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 bg-muted/50 rounded-md text-sm">
+                    <div className="flex flex-col">
+                        <span className="text-muted-foreground">Connected as:</span>
+                        <span className="font-mono text-xs">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                    </div>
+                    <Button variant="ghost" size="sm" onClick={() => disconnect()} className="text-red-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20">
+                        <LogOut className="w-4 h-4 mr-1" /> Switch
+                    </Button>
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="signerLastName">Last Name</Label>
-                  <Input id="signerLastName" {...form.register("signerLastName")} disabled />
-                  {form.formState.errors.signerLastName && <p className="text-red-500 text-xs">{form.formState.errors.signerLastName.message}</p>}
+
+                <form onSubmit={form.handleSubmit(onSign)} className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                    <Label htmlFor="signerFirstName">First Name</Label>
+                    <Input id="signerFirstName" {...form.register("signerFirstName")} disabled />
+                    {form.formState.errors.signerFirstName && <p className="text-red-500 text-xs">{form.formState.errors.signerFirstName.message}</p>}
+                    </div>
+                    
+                    <div className="space-y-2">
+                    <Label htmlFor="signerLastName">Last Name</Label>
+                    <Input id="signerLastName" {...form.register("signerLastName")} disabled />
+                    {form.formState.errors.signerLastName && <p className="text-red-500 text-xs">{form.formState.errors.signerLastName.message}</p>}
+                    </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="signerEmail">Email</Label>
-                <Input id="signerEmail" {...form.register("signerEmail")} disabled />
-              </div>
+                <div className="space-y-2">
+                    <Label htmlFor="signerEmail">Email</Label>
+                    <Input id="signerEmail" {...form.register("signerEmail")} disabled />
+                </div>
 
-              <div className="pt-4">
-                <Button type="submit" className="w-full" disabled={signing}>
-                  {signing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileSignature className="mr-2 h-4 w-4" />}
-                  {signing ? 'Check Wallet...' : 'Sign Document'}
-                </Button>
-                {signing && (
-                    <p className="text-xs text-center text-muted-foreground mt-2 animate-pulse">
-                        Please confirm the signature in your wallet...
-                    </p>
-                )}
-              </div>
-            </form>
+                <div className="pt-4">
+                    <Button type="submit" className="w-full" disabled={signing}>
+                    {signing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <FileSignature className="mr-2 h-4 w-4" />}
+                    {signing ? 'Check Wallet...' : 'Sign Document'}
+                    </Button>
+                    {signing && (
+                        <p className="text-xs text-center text-muted-foreground mt-2 animate-pulse">
+                            Please confirm the signature in your wallet...
+                        </p>
+                    )}
+                </div>
+                </form>
+            </div>
           )}
         </CardContent>
       </Card>

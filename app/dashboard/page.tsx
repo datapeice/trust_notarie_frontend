@@ -33,15 +33,19 @@ export default function Dashboard() {
       fetchDocuments();
     } else if (!authLoading && !isAuthenticated) {
         setLoading(false);
+        // Auto-trigger login if connected but not authenticated
+        if (isConnected) {
+            login().catch(e => console.error("Auto-login failed", e));
+        }
     }
-  }, [token, authLoading, isAuthenticated]);
+  }, [token, authLoading, isAuthenticated, isConnected]);
 
   const fetchDocuments = async () => {
     try {
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/documents`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setDocuments(response.data);
+      setDocuments(response.data || []);
     } catch (error: any) {
       console.error('Failed to fetch documents', error);
       if (error.response && error.response.status === 401) {
@@ -52,7 +56,7 @@ export default function Dashboard() {
     }
   };
 
-  const filteredDocuments = documents.filter(doc => 
+  const filteredDocuments = (documents || []).filter(doc => 
     doc.fileName.toLowerCase().includes(search.toLowerCase())
   );
 

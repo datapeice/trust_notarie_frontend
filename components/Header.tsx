@@ -34,36 +34,33 @@ export default function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <div className="hidden md:block">
-            <ConnectButton showBalance={false} accountStatus="address" chainStatus="icon" />
+          <div className="flex items-center">
+            <ConnectButton showBalance={false} accountStatus={{ smallScreen: 'avatar', largeScreen: 'address' }} chainStatus="icon" />
           </div>
-          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X /> : <Menu />}
+          <button className="md:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background">
+        <div className="md:hidden border-t border-border bg-background absolute w-full z-50 shadow-lg">
           <div className="container py-4 flex flex-col gap-4">
             <Link 
               href="/dashboard" 
-              className="text-sm font-medium py-2"
+              className="text-sm font-medium py-3 px-4 hover:bg-muted rounded-md transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
             </Link>
             <Link 
               href="/create" 
-              className="text-sm font-medium py-2"
+              className="text-sm font-medium py-3 px-4 hover:bg-muted rounded-md transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Create Document
             </Link>
-            <div className="pt-2">
-              <ConnectButton showBalance={false} accountStatus="address" chainStatus="icon" />
-            </div>
           </div>
         </div>
       )}
