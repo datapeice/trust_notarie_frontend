@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import dynamicImport from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
@@ -9,12 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Download, ExternalLink, FileText, ArrowLeft } from 'lucide-react';
-
-// Dynamic import to avoid SSR issues with PDF.js
-const DocumentViewer = dynamicImport(() => import('@/components/DocumentViewer'), {
-  ssr: false,
-  loading: () => <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>
-});
 
 export const dynamic = 'force-dynamic';
 
@@ -47,11 +40,29 @@ function DocumentDetailsContent() {
     }
   };
 
-  if (authLoading || loading) return <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>;
-  if (!document) return <div className="p-8 text-center">Document not found</div>;
+  if (authLoading || loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-[#38ef7d]" />
+      </div>
+    );
+  }
+  
+  if (!document) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <p className="text-xl text-muted-foreground">Document not found</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32 max-w-6xl">
+      {/* Gradient fade mask */}
+      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#242424] to-transparent z-[99] pointer-events-none lg:hidden"></div>
+      
       <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" onClick={() => router.push('/dashboard')} className="p-2">
           <ArrowLeft className="h-5 w-5" />
@@ -82,9 +93,9 @@ function DocumentDetailsContent() {
           <CardContent className="space-y-4">
             <div>
               <h3 className="font-semibold mb-1">File Name</h3>
-              <div className="flex items-center gap-2">
-                <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
-                <span className="break-words overflow-wrap-anywhere min-w-0">{document.fileName}</span>
+              <div className="flex items-start gap-2">
+                <FileText className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
+                <span className="break-all min-w-0 flex-1">{document.fileName}</span>
               </div>
             </div>
             <div>
@@ -144,15 +155,31 @@ function DocumentDetailsContent() {
         </Card>
       </div>
 
-      {/* Document Viewer */}
+      {/* Document Preview */}
       <div className="mt-6">
-        <DocumentViewer 
-          fileUrl={document.blobUrl.startsWith('http') 
-            ? document.blobUrl 
-            : process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.blobUrl
-          }
-          fileName={document.fileName}
-        />
+        <Card className="bg-card/30 backdrop-blur-md border-border">
+          <CardContent className="pt-6">
+            <div className="aspect-video bg-muted/20 rounded-lg border border-border flex flex-col items-center justify-center p-8 text-center">
+              <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Document Preview</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Click the button below to view or download the document
+              </p>
+              <Button
+                onClick={() => {
+                  const url = document.blobUrl.startsWith('http') 
+                    ? document.blobUrl 
+                    : process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.blobUrl;
+                  window.open(url, '_blank');
+                }}
+                className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold"
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Open Document
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

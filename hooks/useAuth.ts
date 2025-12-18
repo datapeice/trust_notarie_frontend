@@ -28,6 +28,7 @@ export function useAuth() {
   const { signMessageAsync } = useSignMessage();
   const [isLoading, setIsLoading] = useState(false);
   const [token, setToken] = useState<string | null>(null);
+  const [previousAddress, setPreviousAddress] = useState<string | undefined>(address);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -39,19 +40,35 @@ export function useAuth() {
       
       if (cookieToken) {
         setToken(cookieToken);
+        // Sync to localStorage
+        localStorage.setItem('authToken', cookieToken);
       } else {
-        // Fallback to localStorage if needed, or just clear
-        const localToken = localStorage.getItem('authToken');
-        if (localToken) {
-           setToken(localToken);
-           // Migrate to cookie
-           const date = new Date();
-           date.setTime(date.getTime() + (24 * 60 * 60 * 1000)); // 24 hours
-           document.cookie = `authToken=${localToken}; expires=${date.toUTCString()}; path=/`;
-        }
+        // If cookie is deleted, also clear localStorage
+        localStorage.removeItem('authToken');
+        setToken(null);
       }
     }
   }, []);
+
+  // Clear token when account changes
+  useEffect(() => {
+    if (previousAddress && address && previousAddress !== address) {
+      // Account switched - clear old token
+      document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      localStorage.removeItem('authToken');
+      setToken(null);
+    }
+    setPreviousAddress(address);
+  }, [address, previousAddress]);
+
+  // Clear token when wallet disconnects
+  useEffect(() => {
+    if (!isConnected && token) {
+      document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+      localStorage.removeItem('authToken');
+      setToken(null);
+    }
+  }, [isConnected, token]);
 
   const login = async () => {
     if (!address) throw new Error('No wallet connected');

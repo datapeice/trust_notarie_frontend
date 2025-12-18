@@ -82,6 +82,9 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32">
+      {/* Gradient fade mask */}
+      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#242424] to-transparent z-[99] pointer-events-none lg:hidden"></div>
+      
       <h1 className="text-3xl lg:text-4xl font-bold text-white mb-8">My Documents</h1>
 
       <Card className="mb-8 bg-card/50 backdrop-blur-sm border-border">
