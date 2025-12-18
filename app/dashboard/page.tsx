@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,36 +27,6 @@ export default function Dashboard() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!contentRef.current) return;
-      
-      const blurElements = contentRef.current.querySelectorAll('.blur-on-scroll');
-      const topBarHeight = 96; // 24 * 4 = 96px (h-24)
-      
-      blurElements.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        const distanceFromTop = rect.top;
-        
-        if (distanceFromTop < topBarHeight && distanceFromTop > 0) {
-          const overlapPercentage = (topBarHeight - distanceFromTop) / topBarHeight;
-          const blurAmount = overlapPercentage * 8;
-          (element as HTMLElement).style.filter = `blur(${blurAmount}px)`;
-        } else if (distanceFromTop <= 0) {
-          (element as HTMLElement).style.filter = 'blur(8px)';
-        } else {
-          (element as HTMLElement).style.filter = 'blur(0px)';
-        }
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     if (token) {
@@ -111,13 +81,10 @@ export default function Dashboard() {
   }
 
   return (
-    <div ref={contentRef} className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32">
-      {/* Gradient fade mask */}
-      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#242424] to-transparent z-[99] pointer-events-none lg:hidden"></div>
-      
-      <h1 className="text-3xl lg:text-4xl font-bold text-white mb-8 blur-on-scroll">My Documents</h1>
+    <div className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32">
+      <h1 className="text-3xl lg:text-4xl font-bold text-white mb-8">My Documents</h1>
 
-      <Card className="mb-8 bg-card/50 backdrop-blur-sm border-border blur-on-scroll">
+      <Card className="mb-8 bg-card/50 backdrop-blur-sm border-border">
         <CardHeader>
           <div className="flex flex-row justify-between items-center gap-4">
             <CardTitle className="text-white">Documents</CardTitle>

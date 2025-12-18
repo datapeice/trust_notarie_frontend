@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, Suspense, useRef } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import dynamicImport from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
@@ -25,36 +25,6 @@ function DocumentDetailsContent() {
   const { token, isAuthenticated, isLoading: authLoading } = useAuth();
   const [document, setDocument] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!contentRef.current) return;
-      
-      const blurElements = contentRef.current.querySelectorAll('.blur-on-scroll');
-      const topBarHeight = 96;
-      
-      blurElements.forEach((element) => {
-        const rect = element.getBoundingClientRect();
-        const distanceFromTop = rect.top;
-        
-        if (distanceFromTop < topBarHeight && distanceFromTop > 0) {
-          const overlapPercentage = (topBarHeight - distanceFromTop) / topBarHeight;
-          const blurAmount = overlapPercentage * 8;
-          (element as HTMLElement).style.filter = `blur(${blurAmount}px)`;
-        } else if (distanceFromTop <= 0) {
-          (element as HTMLElement).style.filter = 'blur(8px)';
-        } else {
-          (element as HTMLElement).style.filter = 'blur(0px)';
-        }
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
-    
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     if (token && id) {
@@ -81,11 +51,8 @@ function DocumentDetailsContent() {
   if (!document) return <div className="p-8 text-center">Document not found</div>;
 
   return (
-    <div ref={contentRef} className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32 max-w-6xl">
-      {/* Gradient fade mask */}
-      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#242424] to-transparent z-[99] pointer-events-none lg:hidden"></div>
-      
-      <div className="flex items-center gap-4 mb-8 blur-on-scroll">
+    <div className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32 max-w-6xl">
+      <div className="flex items-center gap-4 mb-8">
         <Button variant="ghost" onClick={() => router.push('/dashboard')} className="p-2">
           <ArrowLeft className="h-5 w-5" />
         </Button>
@@ -93,7 +60,7 @@ function DocumentDetailsContent() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card className="bg-card/30 backdrop-blur-md border-border blur-on-scroll">
+        <Card className="bg-card/30 backdrop-blur-md border-border">
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Information</CardTitle>
@@ -115,9 +82,9 @@ function DocumentDetailsContent() {
           <CardContent className="space-y-4">
             <div>
               <h3 className="font-semibold mb-1">File Name</h3>
-              <div className="flex items-center">
-                <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
-                {document.fileName}
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-muted-foreground shrink-0" />
+                <span className="break-words overflow-wrap-anywhere min-w-0">{document.fileName}</span>
               </div>
             </div>
             <div>
@@ -139,7 +106,7 @@ function DocumentDetailsContent() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/30 backdrop-blur-md border-border blur-on-scroll">
+        <Card className="bg-card/30 backdrop-blur-md border-border">
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Parties</CardTitle>
@@ -178,7 +145,7 @@ function DocumentDetailsContent() {
       </div>
 
       {/* Document Viewer */}
-      <div className="mt-6 blur-on-scroll">
+      <div className="mt-6">
         <DocumentViewer 
           fileUrl={document.blobUrl.startsWith('http') 
             ? document.blobUrl 
