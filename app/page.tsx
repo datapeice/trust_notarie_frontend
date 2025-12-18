@@ -8,29 +8,32 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          TrustNotarie &nbsp;
-          <code className="font-mono font-bold">v1.0</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none lg:items-center gap-4">
-          <Link href="/dashboard">
-            <Button variant="ghost">Dashboard</Button>
-          </Link>
-          <ConnectButton />
-        </div>
-      </div>
+    <main className="relative min-h-screen overflow-hidden bg-slate-950 text-white">
+      <div className="absolute inset-0 -z-10 animate-[bg-pan_14s_linear_infinite] opacity-70" style={{ background: 'radial-gradient(120% 120% at 10% 20%, rgba(56,239,125,0.25), transparent 45%), radial-gradient(120% 120% at 80% 10%, rgba(59,130,246,0.25), transparent 40%), radial-gradient(120% 120% at 50% 80%, rgba(109,40,217,0.25), transparent 40%)' }} />
+      <div className="absolute inset-0 -z-20 bg-gradient-to-b from-slate-900 via-slate-950 to-black" />
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-to-br before:from-transparent before:to-blue-700 before:opacity-10 before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-to-t after:from-sky-900 after:via-[#38ef7d] after:opacity-40 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#38ef7d] after:dark:opacity-40 before:lg:h-[360px]">
-        <div className="text-center relative z-10">
-          <h1 className="text-6xl font-bold mb-4 text-primary">TrustNotarie</h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Secure, Blockchain-Powered Document Signing
-          </p>
-          
-          <div className="mt-10">
-            <div className="flex justify-center gap-4">
+      <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 py-10 md:py-14">
+        <header className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-lg font-semibold">
+            <span className="rounded-full bg-primary/20 px-3 py-1 text-primary">TrustNotarie</span>
+            <span className="text-sm text-slate-300">v1.0</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard">
+              <Button variant="outline" className="border-slate-700 bg-slate-900/40 text-white hover:bg-slate-800">Dashboard</Button>
+            </Link>
+            <ConnectButton />
+          </div>
+        </header>
+
+        <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center">
+          <div className="space-y-8">
+            <div className="space-y-3">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight">Secure, Blockchain-Powered Document Signing</h1>
+              <p className="text-lg text-slate-300">Create, send, and sign documents with on-chain proofs on Arbitrum. Simple, secure, and wallet-first.</p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
               <ConnectButton.Custom>
                 {({
                   account,
@@ -46,23 +49,17 @@ export default function Home() {
                     ready &&
                     account &&
                     chain &&
-                    (!authenticationStatus ||
-                      authenticationStatus === 'authenticated');
+                    (!authenticationStatus || authenticationStatus === 'authenticated');
 
                   if (!ready) {
                     return (
-                      <Button disabled className="bg-primary/50 text-primary-foreground text-lg px-8 py-6">
-                        Loading...
-                      </Button>
+                      <Button disabled className="bg-primary/40 text-primary-foreground px-6 py-3 text-base">Loading...</Button>
                     );
                   }
 
                   if (!connected) {
                     return (
-                      <Button
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 cursor-pointer relative z-50"
-                        onClick={openConnectModal}
-                      >
+                      <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 text-base" onClick={openConnectModal}>
                         Connect Wallet to Start
                       </Button>
                     );
@@ -70,7 +67,7 @@ export default function Home() {
 
                   if (chain.unsupported) {
                     return (
-                      <Button onClick={openChainModal} variant="destructive" className="text-lg px-8 py-6 cursor-pointer relative z-50">
+                      <Button onClick={openChainModal} variant="destructive" className="px-6 py-3 text-base">
                         Wrong Network
                       </Button>
                     );
@@ -78,55 +75,58 @@ export default function Home() {
 
                   return (
                     <Link href="/create">
-                      <Button className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 cursor-pointer relative z-50">
+                      <Button className="bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 text-base">
                         Create New Document
                       </Button>
                     </Link>
                   );
                 }}
               </ConnectButton.Custom>
+
+              <Link href="/dashboard">
+                <Button variant="secondary" className="bg-slate-800 text-white hover:bg-slate-700 px-6 py-3 text-base">Go to Dashboard</Button>
+              </Link>
             </div>
           </div>
-        </div>
+
+          <div className="grid gap-4">
+            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Wallet className="h-6 w-6 text-primary" /> Web3 Auth
+                </CardTitle>
+                <CardDescription>Login securely with your MetaMask wallet. No passwords required.</CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileSignature className="h-6 w-6 text-primary" /> Digital Signing
+                </CardTitle>
+                <CardDescription>Sign documents digitally and store proofs on Arbitrum blockchain.</CardDescription>
+              </CardHeader>
+            </Card>
+
+            <Card className="border-slate-800 bg-slate-900/60 backdrop-blur">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <ShieldCheck className="h-6 w-6 text-primary" /> Secure Storage
+                </CardTitle>
+                <CardDescription>Documents are encrypted and stored securely in the cloud.</CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </section>
       </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left gap-8">
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Wallet className="h-6 w-6 text-primary" />
-              Web3 Auth
-            </CardTitle>
-            <CardDescription>
-              Login securely with your MetaMask wallet. No passwords required.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileSignature className="h-6 w-6 text-primary" />
-              Digital Signing
-            </CardTitle>
-            <CardDescription>
-              Sign documents digitally and store proofs on Arbitrum blockchain.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-
-        <Card className="bg-card border-border">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ShieldCheck className="h-6 w-6 text-primary" />
-              Secure Storage
-            </CardTitle>
-            <CardDescription>
-              Documents are encrypted and stored securely in the cloud.
-            </CardDescription>
-          </CardHeader>
-        </Card>
-      </div>
+      <style jsx global>{`
+        @keyframes bg-pan {
+          0% { transform: translate3d(0,0,0); }
+          50% { transform: translate3d(-6%, -4%, 0); }
+          100% { transform: translate3d(0,0,0); }
+        }
+      `}</style>
     </main>
   );
 }
