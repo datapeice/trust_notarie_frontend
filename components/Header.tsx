@@ -1,69 +1,165 @@
 'use client';
 
+import { useState } from 'react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Button } from '@/components/ui/button';
+import { Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
 
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Don't show this header on the home page as it has its own custom header
+  // Don't show on home page (has custom header)
   if (pathname === '/') {
     return null;
   }
 
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-xl">TrustNotarie</span>
-            <code className="font-mono text-xs bg-muted px-1 py-0.5 rounded">v1.0</code>
+    <>
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-[100] px-4 py-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2">
+            <div className="bg-[#064e3b] rounded-full px-3 py-1 shadow-lg shadow-green-900/20">
+              <span className="font-bold text-[#4ade80] text-sm">TrustNotarie</span>
+            </div>
+            <span className="text-white font-mono font-bold text-xs">v1.0</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-            <Link href="/dashboard" className={`transition-colors hover:text-foreground/80 ${pathname === '/dashboard' ? 'text-foreground' : 'text-foreground/60'}`}>
-              Dashboard
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center gap-4">
+            <Link href="/dashboard">
+              <Button variant="ghost">Dashboard</Button>
             </Link>
-            <Link href="/create" className={`transition-colors hover:text-foreground/80 ${pathname === '/create' ? 'text-foreground' : 'text-foreground/60'}`}>
-              Create
+            <Link href="/create">
+              <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
+                Create Document
+              </Button>
             </Link>
-          </nav>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center">
-            <ConnectButton showBalance={false} accountStatus={{ smallScreen: 'avatar', largeScreen: 'address' }} chainStatus="icon" />
+            <ConnectButton />
           </div>
-          <button className="md:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden flex items-center">
+            <ConnectButton.Custom>
+              {({
+                account,
+                chain,
+                openAccountModal,
+                openChainModal,
+                openConnectModal,
+                authenticationStatus,
+                mounted,
+              }: any) => {
+                const ready = mounted && authenticationStatus !== 'loading';
+                const connected =
+                  ready &&
+                  account &&
+                  chain &&
+                  (!authenticationStatus || authenticationStatus === 'authenticated');
+
+                if (!connected) {
+                  return (
+                    <Button
+                      onClick={openConnectModal}
+                      className="bg-[#064e3b] text-[#4ade80] hover:bg-[#064e3b]/90 text-xs px-3 py-1 h-auto"
+                    >
+                      Connect
+                    </Button>
+                  );
+                }
+
+                if (chain.unsupported) {
+                  return (
+                    <Button onClick={openChainModal} variant="destructive" className="text-xs px-3 py-1 h-auto">
+                      Wrong Network
+                    </Button>
+                  );
+                }
+
+                return (
+                  <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="flex items-center gap-2 bg-[#2d3748] hover:bg-[#374151] px-2.5 py-1 rounded-lg shadow-lg transition-colors border border-gray-700"
+                  >
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                      <span className="text-[10px] font-bold text-white">
+                        {account.address?.slice(2, 4).toUpperCase() || '??'}
+                      </span>
+                    </div>
+                    <span className="text-white font-medium text-xs">
+                      {account.address?.slice(0, 6) || '0x...'}
+                    </span>
+                    <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                );
+              }}
+            </ConnectButton.Custom>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Slide-out Menu */}
+      <div
+        className={`fixed inset-0 h-full w-full backdrop-blur-md transform transition-all duration-300 ease-in-out z-[200] lg:hidden ${
+          isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={() => setIsMenuOpen(false)}
+      >
+        <div
+          className={`absolute top-0 right-0 h-full w-64 bg-[#1a1a1a]/95 backdrop-blur-2xl shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-gray-800 ${
+            isMenuOpen ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
+
+          <div className="flex flex-col p-6 gap-4 pt-20">
+            <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start">Dashboard</Button>
+            </Link>
+            <Link href="/create" onClick={() => setIsMenuOpen(false)}>
+              <Button className="w-full justify-start bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
+                Create Document
+              </Button>
+            </Link>
+            <ConnectButton.Custom>
+              {({
+                account,
+                chain,
+                openAccountModal,
+                mounted,
+              }: any) => {
+                return (
+                  <Button
+                    onClick={() => {
+                      openAccountModal();
+                      setIsMenuOpen(false);
+                    }}
+                    variant="outline"
+                    className="w-full justify-start"
+                  >
+                    Account Details
+                  </Button>
+                );
+              }}
+            </ConnectButton.Custom>
+          </div>
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {isMenuOpen && (
-        <div className="md:hidden border-t border-border bg-background absolute w-full z-50 shadow-lg">
-          <div className="container py-4 flex flex-col gap-4">
-            <Link 
-              href="/dashboard" 
-              className="text-sm font-medium py-3 px-4 hover:bg-muted rounded-md transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Dashboard
-            </Link>
-            <Link 
-              href="/create" 
-              className="text-sm font-medium py-3 px-4 hover:bg-muted rounded-md transition-colors"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              Create Document
-            </Link>
-          </div>
-        </div>
-      )}
-    </header>
+    </>
   );
 }

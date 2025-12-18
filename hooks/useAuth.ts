@@ -6,7 +6,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 // Setup axios interceptor to automatically add auth token to all requests
 axios.interceptors.request.use(
-  (config) => {
+  (config: any) => {
     // Get token from cookie
     const cookieToken = document.cookie
       .split('; ')
@@ -18,7 +18,7 @@ axios.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
+  (error: any) => {
     return Promise.reject(error);
   }
 );

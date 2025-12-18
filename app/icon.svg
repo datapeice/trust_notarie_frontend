@@ -1,0 +1,16 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="256" fill="#064e3b"/>
+  
+  <!-- Shield Shape -->
+  <path d="M256 80L140 140V220C140 300 180 372 256 420C332 372 372 300 372 220V140L256 80Z" fill="#4ade80"/>
+  
+  <!-- Document/Paper Icon Inside Shield -->
+  <rect x="220" y="180" width="72" height="96" rx="4" fill="#064e3b"/>
+  <line x1="235" y1="205" x2="277" y2="205" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>
+  <line x1="235" y1="225" x2="277" y2="225" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>
+  <line x1="235" y1="245" x2="260" y2="245" stroke="#4ade80" stroke-width="4" stroke-linecap="round"/>
+  
+  <!-- Checkmark -->
+  <path d="M245 295L255 305L275 280" stroke="#4ade80" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

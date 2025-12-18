@@ -77,17 +77,19 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="container mx-auto p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">My Documents</h1>
-        <Link href="/create">
-          <Button>Create New Document</Button>
+    <div className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
+        <h1 className="text-3xl lg:text-4xl font-bold text-white">My Documents</h1>
+        <Link href="/create" className="w-full lg:w-auto">
+          <Button className="w-full lg:w-auto bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
+            Create New Document
+          </Button>
         </Link>
       </div>
 
-      <Card className="mb-8">
+      <Card className="mb-8 bg-card/50 backdrop-blur-sm border-border">
         <CardHeader>
-          <CardTitle>Documents</CardTitle>
+          <CardTitle className="text-white">Documents</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center mb-4">
