@@ -4,6 +4,25 @@ import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
+// Setup axios interceptor to automatically add auth token to all requests
+axios.interceptors.request.use(
+  (config) => {
+    // Get token from cookie
+    const cookieToken = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('authToken='))
+      ?.split('=')[1];
+    
+    if (cookieToken && config.headers) {
+      config.headers.Authorization = `Bearer ${cookieToken}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 export function useAuth() {
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
@@ -12,7 +31,25 @@ export function useAuth() {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      setToken(localStorage.getItem('authToken'));
+      // Check for cookie first
+      const cookieToken = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('authToken='))
+        ?.split('=')[1];
+      
+      if (cookieToken) {
+        setToken(cookieToken);
+      } else {
+        // Fallback to localStorage if needed, or just clear
+        const localToken = localStorage.getItem('authToken');
+        if (localToken) {
+           setToken(localToken);
+           // Migrate to cookie
+           const date = new Date();
+           date.setTime(date.getTime() + (24 * 60 * 60 * 1000)); // 24 hours
+           document.cookie = `authToken=${localToken}; expires=${date.toUTCString()}; path=/`;
+        }
+      }
     }
   }, []);
 
@@ -38,8 +75,14 @@ export function useAuth() {
         signature,
       });
 
-      // Store token
+      // Store token in cookie (24 hours)
+      const date = new Date();
+      date.setTime(date.getTime() + (24 * 60 * 60 * 1000));
+      document.cookie = `authToken=${authData.token}; expires=${date.toUTCString()}; path=/`;
+      
+      // Also keep in localStorage for backup/compatibility
       localStorage.setItem('authToken', authData.token);
+      
       setToken(authData.token);
 
       return authData;
@@ -52,6 +95,7 @@ export function useAuth() {
   };
 
   const logout = () => {
+    document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
     localStorage.removeItem('authToken');
     setToken(null);
   };

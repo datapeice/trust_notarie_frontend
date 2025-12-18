@@ -8,13 +8,17 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col items-center justify-between p-4 lg:p-24 overflow-hidden relative">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          TrustNotarie &nbsp;
-          <code className="font-mono font-bold">v1.0</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none lg:items-center gap-4">
+        <div className="fixed left-0 top-0 flex w-full justify-center pt-8 lg:static lg:w-auto lg:p-0">
+          <div className="flex items-center gap-3">
+            <div className="bg-[#064e3b] rounded-full px-5 py-1.5 shadow-lg shadow-green-900/20">
+              <span className="font-bold text-[#4ade80] text-lg">TrustNotarie</span>
+            </div>
+            <span className="text-white font-mono font-bold">v1.0</span>
+          </div>
+        </div>
+        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-background via-background dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none lg:items-center gap-4 z-50 lg:z-auto pb-8 lg:pb-0">
           <Link href="/dashboard">
             <Button variant="ghost">Dashboard</Button>
           </Link>
@@ -22,10 +26,17 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-to-br before:from-transparent before:to-blue-700 before:opacity-10 before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-to-t after:from-sky-900 after:via-[#38ef7d] after:opacity-40 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#38ef7d] after:dark:opacity-40 before:lg:h-[360px]">
-        <div className="text-center relative z-10">
-          <h1 className="text-6xl font-bold mb-4 text-primary">TrustNotarie</h1>
-          <p className="text-xl text-muted-foreground mb-8">
+      <div className="relative flex place-items-center justify-center w-full py-20 lg:py-0">
+        {/* Animated Background Blobs */}
+        {/* Left Blob - Moves towards center */}
+        <div className="absolute top-1/4 -left-10 w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] bg-gradient-to-r from-[#38ef7d]/40 to-green-600/40 rounded-full blur-[80px] animate-blob-left mix-blend-screen"></div>
+        
+        {/* Right Blob - Moves towards center */}
+        <div className="absolute bottom-1/4 -right-10 w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] bg-gradient-to-r from-blue-600/40 to-sky-500/40 rounded-full blur-[80px] animate-blob-right mix-blend-screen"></div>
+
+        <div className="text-center relative z-10 px-4">
+          <h1 className="text-4xl lg:text-6xl font-bold mb-4 text-white">TrustNotarie</h1>
+          <p className="text-lg lg:text-xl text-muted-foreground mb-8">
             Secure, Blockchain-Powered Document Signing
           </p>
           
@@ -51,7 +62,7 @@ export default function Home() {
 
                   if (!ready) {
                     return (
-                      <Button disabled className="bg-primary/50 text-primary-foreground text-lg px-8 py-6">
+                      <Button disabled className="bg-primary/50 text-primary-foreground text-lg px-8 py-6 w-full sm:w-auto">
                         Loading...
                       </Button>
                     );
@@ -60,7 +71,7 @@ export default function Home() {
                   if (!connected) {
                     return (
                       <Button
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 cursor-pointer relative z-50"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 cursor-pointer relative z-50 w-full sm:w-auto"
                         onClick={openConnectModal}
                       >
                         Connect Wallet to Start
@@ -70,15 +81,15 @@ export default function Home() {
 
                   if (chain.unsupported) {
                     return (
-                      <Button onClick={openChainModal} variant="destructive" className="text-lg px-8 py-6 cursor-pointer relative z-50">
+                      <Button onClick={openChainModal} variant="destructive" className="text-lg px-8 py-6 cursor-pointer relative z-50 w-full sm:w-auto">
                         Wrong Network
                       </Button>
                     );
                   }
 
                   return (
-                    <Link href="/create">
-                      <Button className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6 cursor-pointer relative z-50">
+                    <Link href="/create" className="w-full sm:w-auto">
+                      <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
                         Create New Document
                       </Button>
                     </Link>
@@ -90,10 +101,10 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left gap-8">
+      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left gap-8 px-4">
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 justify-center lg:justify-start">
               <Wallet className="h-6 w-6 text-primary" />
               Web3 Auth
             </CardTitle>
@@ -105,7 +116,7 @@ export default function Home() {
 
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 justify-center lg:justify-start">
               <FileSignature className="h-6 w-6 text-primary" />
               Digital Signing
             </CardTitle>
@@ -117,7 +128,7 @@ export default function Home() {
 
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 justify-center lg:justify-start">
               <ShieldCheck className="h-6 w-6 text-primary" />
               Secure Storage
             </CardTitle>

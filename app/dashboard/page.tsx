@@ -33,12 +33,8 @@ export default function Dashboard() {
       fetchDocuments();
     } else if (!authLoading && !isAuthenticated) {
         setLoading(false);
-        // Auto-trigger login if connected but not authenticated
-        if (isConnected) {
-            login().catch(e => console.error("Auto-login failed", e));
-        }
     }
-  }, [token, authLoading, isAuthenticated, isConnected]);
+  }, [token, authLoading, isAuthenticated]);
 
   const fetchDocuments = async () => {
     try {

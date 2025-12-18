@@ -31,12 +31,7 @@ export default function CreateDocument() {
   const [file, setFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
 
-  // Auto-login if connected but not authenticated
-  useEffect(() => {
-    if (isConnected && !isAuthenticated && !authLoading && !token) {
-       login().catch(e => console.error("Auto-login failed", e));
-    }
-  }, [isConnected, isAuthenticated, authLoading, token, login]);
+  // Token will be loaded from cookies automatically via useAuth hook
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
