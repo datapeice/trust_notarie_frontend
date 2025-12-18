@@ -156,10 +156,13 @@ export default function CreateDocument() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 md:p-8 lg:p-24">
-      <Card className="w-full max-w-2xl bg-card border-border">
+    <main className="flex min-h-screen flex-col items-center p-4 md:p-8 lg:p-24 pt-24 lg:pt-32 relative">
+      {/* Gradient fade mask for content under top bar */}
+      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#242424] to-transparent z-[99] pointer-events-none"></div>
+      
+      <Card className="w-full max-w-2xl bg-card/30 backdrop-blur-md border-border relative z-10">
         <CardHeader>
-          <CardTitle className="text-2xl text-primary">Create New Document</CardTitle>
+          <CardTitle className="text-2xl text-[#38ef7d]">Create New Document</CardTitle>
           <CardDescription>
             Upload a document and invite someone to sign it.
           </CardDescription>

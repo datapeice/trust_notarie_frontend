@@ -31,15 +31,42 @@ export default function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost">Dashboard</Button>
-            </Link>
-            <Link href="/create">
-              <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
-                Create Document
-              </Button>
-            </Link>
-            <ConnectButton />
+            <ConnectButton.Custom>
+              {({
+                account,
+                chain,
+                openAccountModal,
+                openChainModal,
+                openConnectModal,
+                authenticationStatus,
+                mounted,
+              }: any) => {
+                const ready = mounted && authenticationStatus !== 'loading';
+                const connected =
+                  ready &&
+                  account &&
+                  chain &&
+                  (!authenticationStatus || authenticationStatus === 'authenticated');
+
+                return (
+                  <>
+                    {connected && (
+                      <>
+                        <Link href="/dashboard">
+                          <Button variant="ghost">Dashboard</Button>
+                        </Link>
+                        <Link href="/create">
+                          <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
+                            Create Document
+                          </Button>
+                        </Link>
+                      </>
+                    )}
+                    <ConnectButton />
+                  </>
+                );
+              }}
+            </ConnectButton.Custom>
           </div>
 
           {/* Mobile Menu Button */}
@@ -130,11 +157,6 @@ export default function Header() {
           <div className="flex flex-col p-6 gap-4 pt-20">
             <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">Dashboard</Button>
-            </Link>
-            <Link href="/create" onClick={() => setIsMenuOpen(false)}>
-              <Button className="w-full justify-start bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
-                Create Document
-              </Button>
             </Link>
             <ConnectButton.Custom>
               {({

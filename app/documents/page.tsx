@@ -1,16 +1,17 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Download, ExternalLink, FileText } from 'lucide-react';
+import { Loader2, Download, ExternalLink, FileText, ArrowLeft } from 'lucide-react';
 
 function DocumentDetailsContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const id = searchParams.get('id');
   const { token, isAuthenticated, isLoading: authLoading } = useAuth();
   const [document, setDocument] = useState<any>(null);
@@ -41,18 +42,23 @@ function DocumentDetailsContent() {
   if (!document) return <div className="p-8 text-center">Document not found</div>;
 
   return (
-    <div className="container mx-auto p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Document Details</h1>
-        <Button variant="outline" onClick={() => window.open(document.blobUrl, '_blank')}>
-          <Download className="mr-2 h-4 w-4" /> Download
+    <div className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32 max-w-6xl">
+      <div className="flex items-center gap-4 mb-8">
+        <Button variant="ghost" onClick={() => router.push('/dashboard')} className="p-2">
+          <ArrowLeft className="h-5 w-5" />
         </Button>
+        <h1 className="text-3xl font-bold text-white">Document Details</h1>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card className="bg-card/30 backdrop-blur-md border-border">
           <CardHeader>
-            <CardTitle>Information</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Information</CardTitle>
+              <Button variant="outline" size="sm" onClick={() => window.open(document.blobUrl, '_blank')} className="md:hidden">
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -81,9 +87,14 @@ function DocumentDetailsContent() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-card/30 backdrop-blur-md border-border">
           <CardHeader>
-            <CardTitle>Parties</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Parties</CardTitle>
+              <Button variant="outline" size="sm" onClick={() => window.open(document.blobUrl, '_blank')} className="hidden md:flex">
+                <Download className="mr-2 h-4 w-4" /> Download
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>

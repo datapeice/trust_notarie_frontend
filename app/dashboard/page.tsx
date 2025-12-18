@@ -60,36 +60,41 @@ export default function Dashboard() {
 
   if (!isConnected) {
       return (
-          <div className="container mx-auto p-8 text-center">
-              <h1 className="text-2xl font-bold mb-4">Please connect your wallet to view dashboard</h1>
+          <div className="flex items-center justify-center min-h-screen">
+              <div className="text-center">
+                  <h1 className="text-2xl font-bold mb-4">Please connect your wallet to view dashboard</h1>
+              </div>
           </div>
       )
   }
 
   if (!isAuthenticated) {
     return (
-        <div className="container mx-auto p-8 text-center">
-            <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
-            <p className="mb-4 text-muted-foreground">Please sign the message to verify your ownership of the wallet.</p>
-            <Button onClick={login}>Sign In with Wallet</Button>
+        <div className="flex items-center justify-center min-h-screen">
+            <div className="text-center">
+                <h1 className="text-2xl font-bold mb-4">Authentication Required</h1>
+                <p className="mb-4 text-muted-foreground">Please sign the message to verify your ownership of the wallet.</p>
+                <Button onClick={login}>Sign In with Wallet</Button>
+            </div>
         </div>
     )
   }
 
   return (
     <div className="container mx-auto p-4 lg:p-8 pt-24 lg:pt-32">
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-4">
-        <h1 className="text-3xl lg:text-4xl font-bold text-white">My Documents</h1>
-        <Link href="/create" className="w-full lg:w-auto">
-          <Button className="w-full lg:w-auto bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
-            Create New Document
-          </Button>
-        </Link>
-      </div>
+      <h1 className="text-3xl lg:text-4xl font-bold text-white mb-8">My Documents</h1>
 
       <Card className="mb-8 bg-card/50 backdrop-blur-sm border-border">
         <CardHeader>
-          <CardTitle className="text-white">Documents</CardTitle>
+          <div className="flex flex-row justify-between items-center gap-4">
+            <CardTitle className="text-white">Documents</CardTitle>
+            <Link href="/create" className="shrink-0">
+              <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
+                <span className="hidden sm:inline">Create New Document</span>
+                <span className="sm:hidden">Create</span>
+              </Button>
+            </Link>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="flex items-center mb-4">
