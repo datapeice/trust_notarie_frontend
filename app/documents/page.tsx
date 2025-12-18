@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Download, ExternalLink, FileText, ArrowLeft } from 'lucide-react';
+import DocumentViewer from '@/components/DocumentViewer';
 
 function DocumentDetailsContent() {
   const searchParams = useSearchParams();
@@ -55,7 +56,17 @@ function DocumentDetailsContent() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Information</CardTitle>
-              <Button variant="outline" size="sm" onClick={() => window.open(document.blobUrl, '_blank')} className="md:hidden">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => {
+                  const url = document.blobUrl.startsWith('http') 
+                    ? document.blobUrl 
+                    : process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.blobUrl;
+                  window.open(url, '_blank');
+                }} 
+                className="md:hidden"
+              >
                 <Download className="h-4 w-4" />
               </Button>
             </div>
@@ -91,7 +102,17 @@ function DocumentDetailsContent() {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Parties</CardTitle>
-              <Button variant="outline" size="sm" onClick={() => window.open(document.blobUrl, '_blank')} className="hidden md:flex">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => {
+                  const url = document.blobUrl.startsWith('http') 
+                    ? document.blobUrl 
+                    : process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.blobUrl;
+                  window.open(url, '_blank');
+                }} 
+                className="hidden md:flex"
+              >
                 <Download className="mr-2 h-4 w-4" /> Download
               </Button>
             </div>
@@ -113,6 +134,17 @@ function DocumentDetailsContent() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Document Viewer */}
+      <div className="mt-6">
+        <DocumentViewer 
+          fileUrl={document.blobUrl.startsWith('http') 
+            ? document.blobUrl 
+            : process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.blobUrl
+          }
+          fileName={document.fileName}
+        />
       </div>
     </div>
   );

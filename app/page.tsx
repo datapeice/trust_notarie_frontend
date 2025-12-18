@@ -242,11 +242,18 @@ export default function Home() {
                   }
 
                   return (
-                    <Link href="/create" className="w-full sm:w-auto">
-                      <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
-                        Create New Document
-                      </Button>
-                    </Link>
+                    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+                      <Link href="/create" className="w-full sm:w-auto">
+                        <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
+                          Create New Document
+                        </Button>
+                      </Link>
+                      <Link href="/verify" className="w-full sm:w-auto">
+                        <Button variant="outline" className="border-[#38ef7d] text-[#38ef7d] hover:bg-[#38ef7d]/10 text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
+                          Verify Document
+                        </Button>
+                      </Link>
+                    </div>
                   );
                 }}
               </ConnectButton.Custom>

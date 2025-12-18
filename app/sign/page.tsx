@@ -122,7 +122,15 @@ function SignDocumentContent() {
           <div className="flex flex-col gap-2">
             <Button onClick={() => window.location.href = '/'}>Go Home</Button>
             {document?.downloadUrl && (
-              <Button variant="outline" onClick={() => window.open(process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.downloadUrl, '_blank')}>
+              <Button 
+                variant="outline" 
+                onClick={() => {
+                  const url = document.downloadUrl.startsWith('http') 
+                    ? document.downloadUrl 
+                    : process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.downloadUrl;
+                  window.open(url, '_blank');
+                }}
+              >
                 <Download className="w-4 h-4 mr-2" /> Download Signed Document
               </Button>
             )}
@@ -162,7 +170,18 @@ function SignDocumentContent() {
             </div>
             
             {document?.downloadUrl && (
-               <Button variant="outline" size="sm" className="w-full mt-4" onClick={() => window.open(process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.downloadUrl, '_blank')}>
+               <Button 
+                 variant="outline" 
+                 size="sm" 
+                 className="w-full mt-4" 
+                 onClick={() => {
+                   // Check if downloadUrl is already an absolute URL
+                   const url = document.downloadUrl.startsWith('http') 
+                     ? document.downloadUrl 
+                     : process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') + document.downloadUrl;
+                   window.open(url, '_blank');
+                 }}
+               >
                  <Download className="w-4 h-4 mr-2" /> Preview / Download Document
                </Button>
             )}

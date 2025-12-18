@@ -55,6 +55,9 @@ export default function Header() {
                         <Button variant="ghost">Dashboard</Button>
                       </Link>
                     )}
+                    <Link href="/verify">
+                      <Button variant="ghost">Verify</Button>
+                    </Link>
                     <ConnectButton />
                   </>
                 );
@@ -150,6 +153,9 @@ export default function Header() {
           <div className="flex flex-col p-6 gap-4 pt-20">
             <Link href="/dashboard" onClick={() => setIsMenuOpen(false)}>
               <Button variant="ghost" className="w-full justify-start">Dashboard</Button>
+            </Link>
+            <Link href="/verify" onClick={() => setIsMenuOpen(false)}>
+              <Button variant="ghost" className="w-full justify-start">Verify</Button>
             </Link>
             <ConnectButton.Custom>
               {({
