@@ -19,8 +19,8 @@ export default function Header() {
   return (
     <>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-[100] px-4 py-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <header className="fixed top-2 left-0 right-0 z-[100] px-4 py-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between font-mono text-sm">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="bg-[#064e3b] rounded-full px-3 py-1 shadow-lg shadow-green-900/20">
