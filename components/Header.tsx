@@ -51,16 +51,9 @@ export default function Header() {
                 return (
                   <>
                     {connected && (
-                      <>
-                        <Link href="/dashboard">
-                          <Button variant="ghost">Dashboard</Button>
-                        </Link>
-                        <Link href="/create">
-                          <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
-                            Create Document
-                          </Button>
-                        </Link>
-                      </>
+                      <Link href="/dashboard">
+                        <Button variant="ghost">Dashboard</Button>
+                      </Link>
                     )}
                     <ConnectButton />
                   </>

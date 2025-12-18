@@ -110,8 +110,11 @@ function SignDocumentContent() {
   if (loading) return <div className="flex justify-center p-8 pt-24"><Loader2 className="animate-spin" /></div>;
   if (error) return <div className="flex justify-center p-8 pt-24 text-red-500"><AlertCircle className="mr-2" /> {error}</div>;
   if (success) return (
-    <div className="container mx-auto p-8 pt-24 max-w-md text-center">
-      <Card>
+    <div className="container mx-auto p-8 pt-24 lg:pt-32 max-w-md text-center relative">
+      {/* Gradient fade mask for content under top bar */}
+      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#242424] to-transparent z-[99] pointer-events-none"></div>
+      
+      <Card className="bg-card/30 backdrop-blur-md border-border relative z-10">
         <CardContent className="pt-6">
           <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">Document Signed!</h2>
@@ -130,8 +133,11 @@ function SignDocumentContent() {
   );
 
   return (
-    <div className="container mx-auto p-4 md:p-8 pt-24 max-w-lg">
-      <Card>
+    <div className="container mx-auto p-4 md:p-8 pt-24 lg:pt-32 max-w-lg relative">
+      {/* Gradient fade mask for content under top bar */}
+      <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#242424] to-transparent z-[99] pointer-events-none"></div>
+      
+      <Card className="bg-card/30 backdrop-blur-md border-border relative z-10">
         <CardHeader>
           <CardTitle>Sign Document</CardTitle>
           <CardDescription>Please review and sign the document below.</CardDescription>
