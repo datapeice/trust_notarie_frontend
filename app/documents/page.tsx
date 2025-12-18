@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, Suspense } from 'react';
+import dynamicImport from 'next/dynamic';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import axios from 'axios';
@@ -8,7 +9,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Loader2, Download, ExternalLink, FileText, ArrowLeft } from 'lucide-react';
-import DocumentViewer from '@/components/DocumentViewer';
+
+// Dynamic import to avoid SSR issues with PDF.js
+const DocumentViewer = dynamicImport(() => import('@/components/DocumentViewer'), {
+  ssr: false,
+  loading: () => <div className="flex justify-center p-8"><Loader2 className="animate-spin" /></div>
+});
+
+export const dynamic = 'force-dynamic';
 
 function DocumentDetailsContent() {
   const searchParams = useSearchParams();

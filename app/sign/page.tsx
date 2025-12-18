@@ -8,6 +8,8 @@ import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+
+export const dynamic = 'force-dynamic';
 import { Label } from '@/components/ui/label';
 import { Loader2, CheckCircle, AlertCircle, FileText, Download, FileSignature, LogOut } from 'lucide-react';
 import { useForm } from 'react-hook-form';
