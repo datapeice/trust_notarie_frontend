@@ -24,8 +24,8 @@ const config: Config = {
         background: "#242424", // Ubuntu Dark BG
         foreground: "#ffffff",
         primary: {
-          DEFAULT: "#055c26ff", // Ubuntu Green
-          foreground: "#242424",
+          DEFAULT: "#38ef7d", // Neon Green (Unified Light Style)
+          foreground: "#000000",
         },
         secondary: {
           DEFAULT: "#2D2D2D", // Card BG

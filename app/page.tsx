@@ -83,7 +83,7 @@ export default function Home() {
                 return (
                   <Button
                     onClick={openConnectModal}
-                    className="bg-[#064e3b] text-[#4ade80] hover:bg-[#064e3b]/90 text-xs px-3 py-1 h-auto"
+                    className="text-xs px-3 py-1 h-auto"
                   >
                     Connect
                   </Button>
@@ -244,12 +244,12 @@ export default function Home() {
                   return (
                     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                       <Link href="/create" className="w-full sm:w-auto">
-                        <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
-                          Create New Document
+                        <Button className="text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
+                          Start Notarizing
                         </Button>
                       </Link>
                       <Link href="/verify" className="w-full sm:w-auto">
-                        <Button variant="outline" className="border-[#38ef7d] text-[#38ef7d] hover:bg-[#38ef7d]/10 text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
+                        <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
                           Verify Document
                         </Button>
                       </Link>

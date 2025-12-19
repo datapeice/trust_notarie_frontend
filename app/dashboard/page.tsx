@@ -92,7 +92,7 @@ export default function Dashboard() {
           <div className="flex flex-row justify-between items-center gap-4">
             <CardTitle className="text-white">Documents</CardTitle>
             <Link href="/create" className="shrink-0">
-              <Button className="bg-[#38ef7d] text-black hover:bg-[#38ef7d]/90 font-bold">
+              <Button className="font-bold">
                 <span className="hidden sm:inline">Create New Document</span>
                 <span className="sm:hidden">Create</span>
               </Button>

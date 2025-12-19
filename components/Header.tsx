@@ -19,7 +19,7 @@ export default function Header() {
   return (
     <>
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-[100] px-4 py-6">
+      <header className="fixed top-2 lg:top-0 left-0 right-0 z-[100] px-4 py-4 lg:py-6 font-mono text-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -88,7 +88,7 @@ export default function Header() {
                   return (
                     <Button
                       onClick={openConnectModal}
-                      className="bg-[#064e3b] text-[#4ade80] hover:bg-[#064e3b]/90 text-xs px-3 py-1 h-auto"
+                      className="text-xs px-3 py-1 h-auto"
                     >
                       Connect
                     </Button>
