@@ -19,7 +19,8 @@ export default function Home() {
       const topBarHeight = 96; // 24 * 4 = 96px (h-24)
       
       cards.forEach((card) => {
-        const rect = card.getBoundingClientRect();
+        const element = card as HTMLElement;
+        const rect = element.getBoundingClientRect();
         const distanceFromTop = rect.top;
         
         // Calculate blur based on how much the card overlaps with topbar
@@ -27,13 +28,13 @@ export default function Home() {
           // Card is entering the topbar area
           const overlapPercentage = (topBarHeight - distanceFromTop) / topBarHeight;
           const blurAmount = overlapPercentage * 8; // Max 8px blur
-          (card as HTMLElement).style.filter = `blur(${blurAmount}px)`;
+          element.style.filter = `blur(${blurAmount}px)`;
         } else if (distanceFromTop <= 0) {
           // Card is fully under topbar
-          (card as HTMLElement).style.filter = 'blur(8px)';
+          element.style.filter = 'blur(8px)';
         } else {
           // Card is below topbar
-          (card as HTMLElement).style.filter = 'blur(0px)';
+          element.style.filter = 'blur(0px)';
         }
       });
     };
@@ -131,7 +132,7 @@ export default function Home() {
             className={`absolute top-0 right-0 h-full w-64 bg-[#1a1a1a]/95 backdrop-blur-2xl shadow-2xl transform transition-transform duration-300 ease-in-out border-l border-gray-800 ${
               isMenuOpen ? 'translate-x-0' : 'translate-x-full'
             }`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
           >
             {/* Close Button */}
             <button
@@ -245,7 +246,7 @@ export default function Home() {
                     <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
                       <Link href="/create" className="w-full sm:w-auto">
                         <Button className="text-lg px-8 py-6 cursor-pointer relative z-50 w-full font-bold">
-                          Start Notarizing
+                          Create New Document
                         </Button>
                       </Link>
                       <Link href="/verify" className="w-full sm:w-auto">
