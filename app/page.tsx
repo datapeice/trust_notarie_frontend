@@ -46,7 +46,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 lg:p-24 lg:justify-between overflow-hidden relative">
+    <main className="flex min-h-screen flex-col items-center p-4 pb-44 lg:p-24 lg:pb-44 lg:justify-between overflow-hidden relative">
       {/* Gradient fade mask for content under top bar */}
       <div className="fixed top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#242424] to-transparent z-[99] pointer-events-none lg:hidden"></div>
       
@@ -263,7 +263,7 @@ export default function Home() {
         </div>
       </div>
 
-      <div ref={cardsRef} className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-3 lg:text-left gap-8 px-4 z-10">
+      <div ref={cardsRef} className="mb-4 lg:mb-0 grid text-center lg:max-w-5xl lg:w-full lg:grid-cols-3 lg:text-left gap-8 px-4 z-10">
         <Card className="bg-card/30 backdrop-blur-md border-border blur-on-scroll transition-all duration-100">
           <CardHeader>
             <CardTitle className="flex items-center gap-2 justify-center lg:justify-start">
@@ -300,6 +300,39 @@ export default function Home() {
           </CardHeader>
         </Card>
       </div>
+
+      <footer className="absolute bottom-0 w-full py-6 z-10">
+        <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-1 text-muted-foreground/80">
+          <div className="flex flex-col items-center md:items-start">
+            <p className="text-base">
+              Created by <span className="text-white font-medium">Illia Datsiuk</span>{' '}
+              <a 
+                href="https://github.com/datapeice" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                @datapeice
+              </a>
+            </p>
+            <p className="text-sm opacity-70">Pet project for educational purposes.</p>
+          </div>
+
+          <div className="flex flex-col items-center md:items-end gap-1">
+            <a href="mailto:support@tnotarie.app" className="text-base hover:text-white transition-colors">
+              support@tnotarie.app
+            </a>
+            <div className="flex gap-4 text-sm">
+              <Link href="/terms" className="hover:text-white transition-colors">
+                User Agreement
+              </Link>
+              <Link href="/cookies" className="hover:text-white transition-colors">
+                Cookie Policy
+              </Link>
+            </div>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
