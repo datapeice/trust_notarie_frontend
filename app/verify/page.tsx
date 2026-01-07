@@ -8,21 +8,22 @@ import { Upload, FileCheck, ShieldCheck, AlertCircle, Loader2, CheckCircle, XCir
 import axios from 'axios';
 
 interface SignatureInfo {
-  document_id: string;
-  file_name: string;
-  owner_address: string;
-  owner_first_name: string;
-  owner_last_name: string;
-  owner_email: string;
-  signer_address?: string;
-  signer_first_name?: string;
-  signer_last_name?: string;
-  signer_email?: string;
+  id: string;
+  documentHash: string;
+  fileName: string;
+  ownerAddress: string;
+  ownerFirstName: string;
+  ownerLastName: string;
+  ownerEmail: string;
+  signerAddress?: string;
+  signerFirstName?: string;
+  signerLastName?: string;
+  signerEmail?: string;
   status: string;
-  created_at: string;
-  signed_at?: string;
-  blockchain_tx_hash?: string;
-  blockchain_block_number?: number;
+  createdAt: string;
+  signedAt?: string;
+  blockchainTxHash?: string;
+  blockchainBlockNumber?: number;
 }
 
 export default function VerifyPage() {
@@ -76,7 +77,7 @@ export default function VerifyPage() {
 
       // Отправить хеш на backend
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/verify-document`, {
-        documentHash: hash
+        documentHash: `0x${hash}`
       });
 
       if (response.data && response.data.length > 0) {
@@ -225,7 +226,7 @@ export default function VerifyPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <p className="text-sm text-muted-foreground">File Name</p>
-                      <p className="font-semibold">{doc.file_name}</p>
+                      <p className="font-semibold">{doc.fileName}</p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Status</p>
@@ -239,50 +240,45 @@ export default function VerifyPage() {
                   <div>
                     <p className="text-sm text-muted-foreground mb-2">Document Owner</p>
                     <div className="bg-background/50 p-3 rounded">
-                      <p className="font-semibold">{doc.owner_first_name} {doc.owner_last_name}</p>
-                      <p className="text-sm text-muted-foreground">{doc.owner_email}</p>
-                      <p className="text-xs font-mono text-muted-foreground">{doc.owner_address}</p>
+                      <p className="font-semibold">{doc.ownerFirstName} {doc.ownerLastName}</p>
+                      <p className="text-sm text-muted-foreground">{doc.ownerEmail}</p>
+                      <p className="text-xs font-mono text-muted-foreground">{doc.ownerAddress}</p>
                     </div>
                   </div>
 
                   {/* Signer */}
-                  {doc.signer_address && (
+                  {doc.signerAddress && (
                     <div>
                       <p className="text-sm text-muted-foreground mb-2">Signed By</p>
                       <div className="bg-background/50 p-3 rounded">
-                        <p className="font-semibold">{doc.signer_first_name} {doc.signer_last_name}</p>
-                        <p className="text-sm text-muted-foreground">{doc.signer_email}</p>
-                        <p className="text-xs font-mono text-muted-foreground">{doc.signer_address}</p>
-                        {doc.signed_at && (
-                          <p className="text-xs text-green-500 mt-1">
-                            ✓ Signed on {new Date(doc.signed_at).toLocaleString()}
-                          </p>
-                        )}
+                        <p className="font-semibold">{doc.signerFirstName} {doc.signerLastName}</p>
+                        <p className="text-sm text-muted-foreground">{doc.signerEmail}</p>
+                        <p className="text-xs font-mono text-muted-foreground">{doc.signerAddress}</p>
                       </div>
                     </div>
                   )}
 
                   {/* Blockchain */}
-                  {doc.blockchain_tx_hash && (
+                  {doc.blockchainTxHash && (
                     <div>
                       <p className="text-sm text-muted-foreground mb-2">Blockchain Record</p>
                       <div className="bg-background/50 p-3 rounded space-y-2">
                         <div>
                           <p className="text-xs text-muted-foreground">Transaction Hash:</p>
                           <a
-                            href={`https://arbiscan.io/tx/${doc.blockchain_tx_hash}`}
+                            href={`https://sepolia.arbiscan.io/tx/${doc.blockchainTxHash}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-xs font-mono text-[#38ef7d] hover:underline flex items-center gap-1"
                           >
-                            {doc.blockchain_tx_hash.slice(0, 10)}...{doc.blockchain_tx_hash.slice(-8)}
+                            {doc.blockchainTxHash.slice(0, 10)}...{doc.blockchainTxHash.slice(-8)}
                             <ExternalLink className="h-3 w-3" />
                           </a>
                         </div>
-                        {doc.blockchain_block_number && (
+                        {doc.blockchainBlockNumber && (
                           <div>
                             <p className="text-xs text-muted-foreground">Block Number:</p>
-                            <p className="text-xs font-mono">{doc.blockchain_block_number}</p>
+                            <p className="text-xs font-mono">{doc.blockchainBlockNumber}</p>
                           </div>
                         )}
                       </div>
@@ -293,12 +289,12 @@ export default function VerifyPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border">
                     <div>
                       <p className="text-xs text-muted-foreground">Created</p>
-                      <p className="text-sm">{new Date(doc.created_at).toLocaleString()}</p>
+                      <p className="text-sm">{new Date(doc.createdAt).toLocaleString()}</p>
                     </div>
-                    {doc.signed_at && (
+                    {doc.signedAt && (
                       <div>
                         <p className="text-xs text-muted-foreground">Signed</p>
-                        <p className="text-sm">{new Date(doc.signed_at).toLocaleString()}</p>
+                        <p className="text-sm">{new Date(doc.signedAt).toLocaleString()}</p>
                       </div>
                     )}
                   </div>
