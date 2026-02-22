@@ -1,0 +1,10 @@
+# Помечаем фронтенд-файлы как "vendored" (сторонние), чтобы они пропали из статистики
+*.ts linguist-vendored
+*.tsx linguist-vendored
+*.js linguist-vendored
+*.jsx linguist-vendored
+*.css linguist-vendored
+*.scss linguist-vendored
+
+# Если у тебя есть папка со статикой, можно скрыть её целиком
+src/main/resources/static/** linguist-vendored
